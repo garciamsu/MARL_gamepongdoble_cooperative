@@ -1,120 +1,134 @@
-from math import ceil, floor
 import turtle
-import time
-import numpy as np
+import random
 
-import turtle
-
-# Configuración de la ventana
-window = turtle.Screen()
-window.title("Pong Cooperativo")
-window.bgcolor("black")
-window.setup(width=800, height=600)
-window.tracer(0)
-
-# Marcador
-score = 0
-
-# Pala base
-class Paddle(turtle.Turtle):
-    def __init__(self, x_position, y_position):
-        super().__init__()
-        self.shape("square")
-        self.color("white")
-        self.shapesize(stretch_wid=6, stretch_len=1)
-        self.penup()
-        self.goto(x_position, y_position)
-
-    def move_up(self):
-        y = self.ycor()
-        if y < 250:  # Limitar el movimiento para que no salga de la pantalla
-            self.sety(y + 20)
-
-    def move_down(self):
-        y = self.ycor()
-        if y > -240:  # Limitar el movimiento para que no salga de la pantalla
-            self.sety(y - 20)
-
-# Pelota
-class Ball(turtle.Turtle):
+class Game:
     def __init__(self):
-        super().__init__()
-        self.shape("square")
-        self.color("white")
-        self.penup()
-        self.goto(0, 0)
-        self.dx = 0.15
-        self.dy = 0.15
+        # Configuración de la ventana del juego
+        self.window = turtle.Screen()
+        self.window.title("Pong Cooperativo")
+        self.window.bgcolor("lightblue")
+        self.window.setup(width=800, height=600)
+        self.window.tracer(0)
 
-    def move(self):
-        self.setx(self.xcor() + self.dx)
-        self.sety(self.ycor() + self.dy)
+        # Crear instancias de las clases anidadas
+        self.paddle_a = self.Paddle(350, 50)
+        self.paddle_b = self.Paddle(350, -50)
+        self.ball = self.Ball()
+        self.scoreboard = self.Scoreboard()
 
-    def bounce_y(self):
-        self.dy *= -1
+        # Configuración de controles
+        self.window.listen()
+        self.window.onkeypress(self.paddle_a.move_up, "Up")
+        self.window.onkeypress(self.paddle_a.move_down, "Down")
+        self.window.onkeypress(self.paddle_b.move_up, "w")
+        self.window.onkeypress(self.paddle_b.move_down, "s")
 
-    def bounce_x(self):
-        self.dx *= -1
+        # Iniciar el juego
+        self.run_game()
 
-    def reset_position(self):
-        self.goto(0, 0)
-        self.bounce_x()
+    class Paddle(turtle.Turtle):
+        def __init__(self, x, y):
+            super().__init__()
+            self.shape("square")
+            self.color("darkblue")
+            self.shapesize(stretch_wid=6, stretch_len=1)
+            self.penup()
+            self.goto(x, y)
 
-# Dibujar el marcador
-class Scoreboard(turtle.Turtle):
-    def __init__(self):
-        super().__init__()
-        self.color("white")
-        self.penup()
-        self.hideturtle()
-        self.goto(0, 260)
-        self.write("Puntaje: 0", align="center", font=("Courier", 24, "normal"))
+        def move_up(self):
+            y = self.ycor()
+            if y < 250:
+                self.sety(y + 20)
 
-    def update_score(self, score):
-        self.clear()
-        self.write(f"Puntaje: {score}", align="center", font=("Courier", 24, "normal"))
+        def move_down(self):
+            y = self.ycor()
+            if y > -240:
+                self.sety(y - 20)
 
-# Inicializar palas (ambas en el lado derecho), pelota y marcador
-right_paddle_1 = Paddle(350, 100)  # Primera pala del lado derecho
-right_paddle_2 = Paddle(350, -100) # Segunda pala del lado derecho
-ball = Ball()
-scoreboard = Scoreboard()
+    class Ball(turtle.Turtle):
+        def __init__(self):
+            super().__init__()
+            self.shape("circle")
+            self.color("red")
+            self.penup()
+            self.goto(0, 0)
+            self.dx = random.choice([-0.2, -0.15])
+            self.dy = random.choice([-0.2, 0.2])
 
-# Controles del teclado
-window.listen()
-window.onkeypress(right_paddle_1.move_up, "Up")
-window.onkeypress(right_paddle_1.move_down, "Down")
-window.onkeypress(right_paddle_2.move_up, "w")
-window.onkeypress(right_paddle_2.move_down, "s")
+        def move(self):
+            self.setx(self.xcor() + self.dx)
+            self.sety(self.ycor() + self.dy)
 
-# Bucle principal del juego
-while True:
-    window.update()
+            # Rebote en los bordes superiores e inferiores
+            if self.ycor() > 290:
+                self.sety(290)
+                self.dy *= -1
 
-    # Movimiento de la pelota
-    ball.move()
+            if self.ycor() < -290:
+                self.sety(-290)
+                self.dy *= -1
 
-    # Rebote en el borde superior e inferior
-    if ball.ycor() > 290:
-        ball.sety(290)
-        ball.bounce_y()
+            # Si la pelota sale por el lado derecho
+            if self.xcor() > 390:
+                return "missed"
 
-    if ball.ycor() < -290:
-        ball.sety(-290)
-        ball.bounce_y()
+            # Si la pelota sale por el lado izquierdo, reiniciamos
+            if self.xcor() < -390:
+                self.goto(0, 0)
+                self.dx = random.choice([-0.2, -0.15])
+                self.dy = random.choice([-0.2, 0.2])
 
-    # Rebote en las palas cooperativas del lado derecho
-    if (ball.dx > 0 and ball.xcor() > 340 and (ball.distance(right_paddle_1) < 50 or ball.distance(right_paddle_2) < 50)):
-        ball.bounce_x()
+            return "continue"
 
-    # Verificar si la pelota sale del lado izquierdo (anota un punto)
-    if ball.xcor() > 390:
-        score -= 1  # Pierden puntos si la pelota pasa por el lado derecho
-        scoreboard.update_score(score)
-        ball.reset_position()
+        def bounce_x(self):
+            self.dx *= -1
+            # Variar velocidad tras cada rebote
+            self.dx += random.choice([0.01, -0.01])
+            self.dy += random.choice([0.01, -0.01])
 
-    # Verificar si la pelota pasa por el lado izquierdo (anotan un punto)
-    if ball.xcor() < -390:
-        score += 1  # Ganan puntos si la pelota sale por el lado izquierdo
-        scoreboard.update_score(score)
-        ball.reset_position()
+    class Scoreboard(turtle.Turtle):
+        def __init__(self):
+            super().__init__()
+            self.score = 0
+            self.color("black")
+            self.penup()
+            self.hideturtle()
+            self.goto(0, 260)
+            self.update_score()
+
+        def update_score(self):
+            self.clear()
+            self.write(f"Puntuación: {self.score}", align="center", font=("Courier", 24, "normal"))
+
+        def increase_score(self):
+            self.score += 1
+            self.update_score()
+
+    def run_game(self):
+        while True:
+            self.window.update()
+
+            # Mover la pelota
+            status = self.ball.move()
+
+            # Revisar si la pelota fue fallada
+            if status == "missed":
+                break  # El juego termina si la pelota es fallada
+
+            # Rebote con las paletas
+            if (340 < self.ball.xcor() < 350) and (self.paddle_a.ycor() - 50 < self.ball.ycor() < self.paddle_a.ycor() + 50):
+                self.ball.setx(340)
+                self.ball.bounce_x()
+                self.scoreboard.increase_score()
+
+            if (340 < self.ball.xcor() < 350) and (self.paddle_b.ycor() - 50 < self.ball.ycor() < self.paddle_b.ycor() + 50):
+                self.ball.setx(340)
+                self.ball.bounce_x()
+                self.scoreboard.increase_score()
+
+        # Finaliza el juego
+        self.window.bye()
+
+# Iniciar el juego
+if __name__ == "__main__":
+    Game()
