@@ -1,48 +1,91 @@
-# Fundamentos del Aprendizaje por Refuerzo
+# Fundamentos del Aprendizaje por Refuerzo Multiagente (MARL) 🧠 basados en los principios de los sistemas emergentes 🐜🐜
 
-El término "Aprendizaje automático por refuerzo", o simplemente "Aprendizaje por refuerzo" (RL, por sus siglas en inglés), se basa en la idea de que un agente aprende a tomar decisiones en un entorno dinámico a través de la adquisición de conocimiento para maximizar la señal de recompensa. Antes de entrar en los detalles, es importante considerar definiciones de los elementos clave del RL [4]:
+Aprendizaje por Refuerzo Multiagente (MARL) es un área de la inteligencia artificial que se enfoca en cómo múltiples agentes autónomos pueden aprender a tomar decisiones a través de la interacción con un entorno compartido. Para entender los fundamentos de MARL, comencemos por desglosar los conceptos clave de manera sencilla [X].En MARL, en lugar de un solo agente, tenemos múltiples agentes que interactúan en el mismo entorno; por ejemplo, piensa en un juego de fútbol. Cada jugador (agente) necesita aprender a cooperar con sus compañeros y competir contra el equipo contrario para ganar el partido. Estos agentes pueden:
 
-- **Agente**: la entidad que interactúa con el medio ambiente; es quien toma las decisiones. Puede ser un robot, un coche autónomo, la paleta en el juego de ping pong, etc.
-- **Entorno**: el universo en el que interactúa el agente. El medio ambiente es el mundo exterior; comprende todo lo que está fuera del agente. Por ejemplo, puede ser un laberinto, una casa, un parque, el tablero/pelota en el juego de ping pong, etc. No necesariamente tiene que ser un espacio físico.
-- **Acción (A)**: conducta que el agente puede realizar, es decir, las posibles acciones que puede tomar en un momento determinado el agente. Lo más frecuente es que se asocie con un movimiento, por ejemplo, hacia el norte, hacia el sur, o recogiendo o dejando caer un objeto, movimiento de subir/bajar de la paleta en el juego de ping pong, etc.
-- **Estado (S)**: coyuntura del agente con el entorno, es decir, son los indicadores del ambiente de cómo están los diversos elementos que lo componen en ese momento. Por ejemplo, considere el caso de un robot en una posición en un laberinto determinado, la posición en el tablero tanto de la pelota como la paleta en el juego de ping pong, etc 
-- **Recompensa (R)**: retribución (positiva o negativa) que recibe el agente al alcanzar el siguiente estado (s′). Por ejemplo, ganar 10 puntos cuando la paleta golpea la pelota o -10 puntos cuando no lo logra en el juego de ping pong.
-- **Política (π)**: estrategia de acción que promueve el cambio de estado en la expectativa de obtener el mejor resultado. En otras palabras, es el objetivo que tienes para la formación, lo que aprenderá el agente. Puede ser, por ejemplo, en el ping pong, la política podría ser algo así como "si la pelota está por encima del centro de la mesa, mover la paleta hacia arriba".
-- **Episodio**: conjunto completo de acciones que finaliza al alcanzar una meta. Por ejemplo, ir de un punto a otro, ir de la casa al castillo, etc. Pensando que cada movimiento es un paso único, el conjunto de pasos hasta el estado final es lo que se considera un episodio.
-## Criterios de selección de los algoritmos de RL
-La selección de algoritmos de RL depende de varias condiciones y características del problema que se intenta resolver. Aquí hay algunas condiciones clave que definen esta selección:
-### **Naturaleza del Entorno**
-- **Estático vs Dinámico:** Si el entorno cambia con el tiempo, pueden ser necesarios algoritmos que se adapten rápidamente a estos cambios.
-- **Determinístico vs Estocástico:** En entornos determinísticos, la misma acción en el mismo estado siempre produce el mismo resultado, mientras que en entornos estocásticos, el resultado puede variar. Por ejemplo, algoritmos como Q-learning funcionan bien en ambos tipos de entornos, pero en entornos altamente estocásticos, pueden ser necesarios algoritmos que manejan mejor la incertidumbre, como los basados en métodos Monte Carlo.
-### **Disponibilidad de Información**
-- **Modelo vs Sin Modelo:** Si se conoce un modelo del entorno (transiciones y recompensas), se pueden utilizar métodos como Value Iteration o Policy Iteration. En ausencia de un modelo, se recurren a métodos como Q-learning y SARSA.
-- **Grado de Exploración:** Algoritmos como Epsilon-Greedy o Upper Confidence Bound (UCB) se utilizan para balancear la exploración y explotación.
-### **Dimensionalidad del Problema**
-- **Espacio de Estados y Acciones:** Problemas con grandes espacios de estados y acciones pueden necesitar técnicas de aproximación de funciones, como Deep Q-Learning (DQN) que usa redes neuronales.
-### **Especificaciones del Objetivo**
-- **Recompensas Inmediatas vs Futuras:** Algoritmos como Temporal Difference (TD) y Q-learning son útiles para maximizar recompensas a largo plazo.
-- **Optimización de Políticas:** Si el objetivo es optimizar una política, se pueden usar métodos basados en políticas como Policy Gradient Methods.
-### **Capacidades Computacionales**
-- **Requerimientos de Tiempo y Memoria:** Algoritmos como Q-learning pueden ser computacionalmente intensivos en problemas grandes. Métodos basados en aprendizaje profundo, como DQN, requieren más recursos computacionales.
-### **Tipo de Interacción con el Entorno**
-- **Episódico vs Continuo:** En problemas episódicos, el agente trabaja en secuencias de interacciones que terminan en un estado terminal. En problemas continuos, no hay un estado terminal definido.
-### **Disponibilidad de Datos de Entrenamiento**
-- **Aprendizaje en Línea vs Offline:** En el aprendizaje en línea, el agente aprende a medida que interactúa con el entorno. En el aprendizaje offline, el agente aprende de un conjunto de datos preexistente.
-### **Robustez y Seguridad**
-- **Entornos Críticos:** En aplicaciones críticas (como conducción autónoma), se necesitan algoritmos que sean robustos a errores y que puedan manejar fallas de manera segura.
-### **Interacción con Otros Agentes**
-- **Multiagente:** En entornos donde múltiples agentes interactúan, se requieren algoritmos que manejan la cooperación y competencia entre agentes, como los basados en aprendizaje multiagente.
+- Cooperar: Trabajar juntos para lograr un objetivo común.
+- Competir: Intentar superar a los demás para lograr su propio objetivo.
+- Mixto: Una combinación de cooperación y competencia.
 
-Seleccionar el algoritmo adecuado implica evaluar estas condiciones y elegir el que mejor se adapte a las características específicas del problema y las restricciones del entorno.
+ El Aprendizaje por Refuerzo (RL) es una técnica donde un agente aprende a tomar decisiones mediante ensayo y error, buscando maximizar una recompensa acumulada. Imagina a un niño aprendiendo a montar en bicicleta: prueba diferentes movimientos, se cae algunas veces, pero con el tiempo aprende a mantener el equilibrio y avanzar sin caerse.
+
+- Agente: Es el aprendiz o el que toma decisiones.
+- Entorno: Es el mundo con el que interactúa el agente.
+- Acciones: Son las decisiones o movimientos que el agente puede realizar.
+- Recompensas: Son señales que indican qué tan bien lo está haciendo el agente.
+- Política: Es la estrategia que sigue el agente para decidir qué acción tomar en cada situación.
+
+Por otra parte, los sistemas emergentes se caracterizan por comportamientos complejos que surgen de interacciones simples entre componentes individuales. Al aplicar estos principios al aprendizaje por refuerzo multiagente, consideramos lo siguiente:
+
+- **Interacciones Locales:** Los agentes interactúan principalmente con su entorno inmediato y, de forma limitada, con otros agentes.
+- **Reglas Simples:** Los agentes siguen reglas sencillas que, al combinarse, generan comportamientos complejos.
+- **Descentralización:** No existe un controlador central; la coordinación surge de las interacciones entre agentes.
+- **Adaptación y Aprendizaje:** Los agentes se adaptan y aprenden de sus experiencias, lo que conduce a la evolución del comportamiento del sistema.
+- **Autoorganización:** El sistema se organiza a sí mismo en patrones o comportamientos sin guía externa.
+
+## Desafíos Clave en MARL 🚧
+
+El aprendizaje con múltiples agentes introduce varios desafíos adicionales:
+
+### No Estacionariedad del Entorno
+En RL tradicional, el entorno es generalmente fijo. En MARL, el entorno cambia constantemente porque otros agentes también están aprendiendo y cambiando sus estrategias. Lo que implica que los agentes deben adaptarse no solo al entorno, sino también a las acciones y aprendizajes de los otros agentes.
+
+### Coordinación y Cooperación
+Lograr que los agentes trabajen juntos eficazmente puede ser difícil, especialmente si no pueden comunicarse directamente. Esto implica que los agentes deben desarrollar estrategias para coordinar sus acciones y maximizar las recompensas compartidas.
+
+**La cooperación** se refiere al proceso en el que dos o más agentes trabajan juntos voluntariamente hacia un objetivo común o compartido. En la cooperación, los agentes pueden estar dispuestos a sacrificar sus propios intereses individuales o recursos para beneficiar al grupo o para lograr una meta colectiva. Ejemplo: Ajustar la velocidad para evitar chocar con otros vehículos. Características clave de la cooperación:
+
+- Objetivo compartido: Los agentes tienen metas comunes y trabajan para alcanzarlas juntos.
+- Beneficio mutuo: Las acciones de los agentes están orientadas a beneficiar al grupo, no solo a sí mismos.
+- Comunicación y entendimiento mutuo: Puede requerir que los agentes compartan información y comprendan las intenciones de los demás.
+- Sacrificio personal: Los agentes pueden renunciar a ventajas individuales por el bien del grupo.
+
+Por otra parte, **La coordinación** implica la organización de acciones o esfuerzos entre dos o más agentes para asegurar que trabajen juntos de manera eficiente y sin conflictos. La coordinación se enfoca en sincronizar y armonizar las acciones para lograr un resultado óptimo, evitando interferencias o duplicación de esfuerzos. A diferencia de la cooperación, la coordinación no necesariamente requiere que los agentes compartan un objetivo común o que estén dispuestos a sacrificar sus propios intereses. Ejemplo: Detenerse para permitir que una ambulancia pase rápidamente. Características clave de la coordinación:
+
+- Sincronización de acciones: Los agentes alinean sus actividades en tiempo y forma.
+- Prevención de conflictos: Se evitan interferencias o colisiones entre las acciones de los agentes.
+- Independencia de objetivos: Los agentes pueden tener metas individuales distintas, pero aún así necesitan coordinarse.
+- Comunicación mínima: A veces, la coordinación puede lograrse con información limitada o señales indirectas.
+
+Comprender estas diferencias es crucial en campos como la inteligencia artificial y la robótica, donde diseñar sistemas que puedan coordinarse y cooperar efectivamente puede llevar a soluciones más eficientes y armoniosas en entornos multiagente.
+
+### Asignación de Créditos
+Determinar cómo las acciones individuales de un agente contribuyen al resultado global. Lo que es difícil saber qué agente merece crédito por una recompensa obtenida en equipo.
+
+## Fundamentos de MARL 🧩
+
+**Agentes y Entorno**
+- Cada agente tiene su propia percepción del entorno, que puede ser completa o limitada.
+- Los agentes toman acciones basadas en su percepción y política.
+- El entorno responde a las acciones de todos los agentes, proporcionando nuevas observaciones y recompensas.
+
+**Políticas y Aprendizaje**
+- Una política es la estrategia que un agente sigue para decidir sus acciones.
+- Los agentes usan algoritmos de aprendizaje, como Q-learning, para actualizar sus políticas basados en las recompensas recibidas.
+- En MARL, los agentes pueden aprender de manera independiente o conjunta.
+
+**Tipos de Interacciones entre Agentes**
+- Cooperativo: Todos los agentes comparten el mismo objetivo.
+- Competitivo: Los agentes tienen objetivos opuestos.
+- Mixto: Combina elementos cooperativos y competitivos.
+
+## Algoritmos Básicos en MARL 📚
+Algunos algoritmos comunes utilizados en MARL incluyen:
+
+- Q-learning Independiente
+Cada agente aplica Q-learning por su cuenta, sin considerar las acciones de los demás. Tiene como ventaja su Simplicidad pero  puede ser ineficiente debido a la no estacionariedad del entorno.
+- Aprendizaje Conjunto: Los agentes aprenden una política conjunta que considera las acciones de todos. Tiene como ventaja que Mejora su coordinación, pero el espacio de estados y acciones se vuelve exponencialmente grande con más agentes.
+- Métodos Basados en Valor y Política. En el caso de los Métodos de Valor, los agentes estiman el valor de los estados o acciones; que con los Métodos de Política, los agentes aprenden directamente una política sin estimar valores.
+
 # Caso de estudio
-## Juego de Ping Pong
+## Juego de Ping Pong doble cooperativo
 ### Descripción del juego
 
-Imagina un emocionante juego de ping pong donde tú, como único jugador, controlas una pala situada en un lado de la pantalla. Tienes tres (3) vidas al comenzar, y tu objetivo es devolver la pelota tantas veces como sea posible para mantener el juego en marcha. Cada vez que logras devolver la pelota, te mantienes en el juego. Sin embargo, si la pelota pasa de largo y no logras devolverla, pierdes una vida. Si te quedas sin vida, el juego termina inmediatamente. Por cada pelota devuelta con éxito, no solo mantienes tus vidas, sino que obtienes 10 puntos. Pero cuidado, si pierdes la pelota y con ello una vida, se te restará 10 puntos de tu marcador. El desafío está en jugar hasta que se cumplan 3000 interacciones o hasta que logres acumular 1000 puntos, lo que ocurra primero. A medida que el juego avanza, la presión aumenta, y cada rebote exitoso te acerca más a la victoria.
+El Juego de Ping Pong Doble Cooperativo es una variante del tenis de mesa tradicional en la que dos jugadores trabajan juntos  en equipo (mismo lado) para mantener la pelota en juego el mayor tiempo posible. A diferencia del juego competitivo, donde los jugadores intentan vencer al oponente, en esta modalidad cooperativa el objetivo es colaborar para lograr una meta común, es decir, lograr el mayor número posible de golpes consecutivos, promoviendo la coordinación y el trabajo en equipo.
 
 ![](files/assets/ping_pong_game.png)
-### Relación del juego de ping pong y los elementos claves de RL
-El juego de ping pong para un solo jugador, puede ser una excelente representación para explicar los conceptos clave del aprendizaje por refuerzo (Reinforcement Learning, RL). A continuación, se describen los elementos clave de RL en el contexto de este juego:
+
+### Relación del juego de ping pong cooperativo, los elementos claves de MARL y sistemas emergentes
+A continuación, reestructuraremos el enfoque anterior para implementar Multi-Agent Reinforcement Learning (MARL) en el juego Pong con dos jugadores que cooperan y coordinan, tomando en cuenta los principios de los sistemas emergentes. Nos centraremos en cómo interacciones simples y locales entre agentes pueden conducir a comportamientos complejos y coordinados sin necesidad de control centralizado.
 
 ||**Definición**|**Ejemplo**|
 | :- | :-: | :-: |
@@ -56,93 +99,66 @@ En un contexto de aprendizaje por refuerzo, un agente (en este caso, el jugador)
 
 <img src="files/assets/componentes.png" width="100%"/>
 
-### Naturaleza del juego de ping pong
-En el contexto del aprendizaje por refuerzo, la **naturaleza del entorno** en el juego de ping pong puede describirse en términos de los siguientes aspectos:
-#### Determinístico vs. Estocástico:
-- **Determinístico**: El entorno en este juego de ping pong es predominantemente determinístico, lo que significa que las acciones del jugador (mover la pala hacia arriba o hacia abajo) producen resultados predecibles. Por ejemplo, si el jugador mueve la pala hacia arriba, la pala se mueve exactamente a la posición prevista, y la trayectoria de la pelota sigue leyes físicas predefinidas.
-- **Estocástico**: En un entorno más complejo o en un simulador que incluye variabilidad, factores como pequeños desvíos en la física de la pelota o errores en la detección de colisiones podrían introducir un elemento de aleatoriedad, haciendo que el entorno sea estocástico. Sin embargo, en este juego básico, la estocasticidad es mínima.
-#### Estacionario vs. No Estacionario:
-- **Estacionario**: El entorno es mayormente estacionario, lo que significa que las reglas del juego (como la gravedad, las colisiones, la velocidad de la pelota) no cambian con el tiempo. La relación entre las acciones y las recompensas sigue siendo constante.
-- **No Estacionario**: Si las reglas del juego cambian con el tiempo (por ejemplo, si la velocidad de la pelota aumenta gradualmente para hacer el juego más desafiante), el entorno se volvería no estacionario. En el juego básico que hemos implementado, el entorno se mantiene estacionario.
-#### Discreto vs. Continuo:
-- **Continuo**: El entorno es continuo en cuanto a las posiciones posibles de la pala y la pelota. Tanto la pala como la pelota pueden ocupar una gama continua de posiciones a lo largo de los ejes X e Y.
-- **Discreto**: Si el juego fuera simplificado a una rejilla o si se establecieran posiciones específicas donde la pala y la pelota pueden estar, entonces el entorno sería discreto. Sin embargo, en la implementación estándar, las posiciones y movimientos son continuos.
-#### Totalmente Observable vs. Parcialmente Observable:
-- **Totalmente Observable**: El entorno es totalmente observable, lo que significa que el jugador (o un agente en un escenario de aprendizaje por refuerzo) tiene acceso completo a toda la información relevante para tomar decisiones óptimas. El jugador puede ver la posición de la pelota y la pala en todo momento.
-- **Parcialmente Observable**: Si el entorno limitara la información disponible (por ejemplo, si la vista del jugador estuviera restringida o si se introdujeran elementos ocultos), sería parcialmente observable. Sin embargo, en el juego de ping pong básico, no hay tal restricción.
-#### Episódico vs. Continuo:
-- **Episódico**: En un entorno episódico, las interacciones del agente con el entorno se dividen en episodios separados, donde cada episodio tiene un inicio y un fin claro. El juego de ping pong puede considerarse episódico si cada partida (desde que comienza el juego hasta que el jugador pierde) se trata como un episodio.
-- **Continuo**: Si el juego nunca terminara y el agente continuara jugando indefinidamente sin reiniciar, el entorno sería continuo. Aunque cada partida puede reiniciarse después de perder, en la implementación básica, el juego tiene episodios claros.
-#### Multiagente vs. Monoagente:
-- **Monoagente**: El entorno es monoagente, ya que solo hay un jugador interactuando con el entorno. No hay otros jugadores o agentes con los que el jugador deba competir o cooperar.
-- **Multiagente**: Si hubiera más jugadores (por ejemplo, un oponente controlado por IA), el entorno se volvería multiagente. En el caso actual, el entorno se mantiene monoagente.
+### Diseño de un sistema MARL basados en principios emergentes
+1. Definición del Entorno y los Agentes
+**Entorno:** El juego Pong con dos paletas controladas por agentes y una pelota.
+**Agentes:** Dos jugadores (paletas) que actúan de forma autónoma y descentralizada.
+**Percepción Local:** Cada agente percibe solo información local:
+- Su propia posición.
+- La posición y velocidad de la pelota relativa a sí mismo.
+- Opcionalmente, información limitada sobre el otro agente (por ejemplo, su posición relativa).
 
-La naturaleza del entorno en el juego de ping pong, desde la perspectiva del aprendizaje por refuerzo, se puede describir como **determinístico**, **estacionario**, **discreto**, **totalmente observable**, **episódico** y **monoagente**. Estas características simplifican el proceso de aprendizaje, permitiendo que un agente potencial (o jugador) pueda aprender a interactuar de manera óptima con el entorno sin la complejidad añadida de incertidumbre o falta de información.
-### Algoritmos de RL recomendados
+2. Diseño de Reglas Simples y Acciones
+**Acciones Disponibles:**
+- Mover hacia arriba.
+- Mover hacia abajo.
+- Quedarse quieto.
 
-Dado que la naturaleza del juego de ping pong que has descrito es **determinístico**, **estacionario**, **discreto**, **totalmente observable**, **episódico** y **monoagente**, los algoritmos de aprendizaje por refuerzo recomendados para este entorno incluyen:
-#### Q-Learning:
-- **Descripción**: Q-Learning es un algoritmo basado en la tabla Q que busca aprender la función de valor de acción (Q-function) para un agente en un entorno. Se trata de un método off-policy, lo que significa que el agente puede aprender la política óptima independientemente de la política que sigue para explorar el entorno.
-- **Aplicabilidad**: Dado que el entorno es discreto y totalmente observable, Q-Learning puede ser muy eficaz. Se construye una tabla Q para mapear estados y acciones a valores Q, y el agente aprende a maximizar la recompensa acumulada.
-- **Ventajas**: Es fácil de implementar y converge hacia la política óptima con suficiente exploración.
-#### SARSA (State-Action-Reward-State-Action):
-- **Descripción**: SARSA es un algoritmo similar a Q-Learning, pero es un método on-policy, lo que significa que el agente actualiza la tabla Q usando la política que está siguiendo actualmente.
-- **Aplicabilidad**: En un entorno discreto y episódico, SARSA es útil porque considera la secuencia completa de acciones que el agente realmente toma, lo que puede ser más seguro en ciertos escenarios donde se desea evitar comportamientos exploratorios riesgosos.
-- **Ventajas**: Proporciona una política más conservadora y puede ser más estable en algunos entornos.
-#### Dynamic Programming (DP) Methods:
-- **Descripción**: Métodos como Iteración de Políticas e Iteración de Valores son algoritmos de programación dinámica que se pueden usar si el modelo del entorno es conocido. Estos métodos iteran sobre la función de valor o la política hasta que convergen en la solución óptima.
-- **Aplicabilidad**: Como el entorno es estacionario, determinístico y totalmente observable, los métodos de programación dinámica pueden calcular eficientemente la política óptima.
-- **Ventajas**: Ofrecen soluciones exactas y son eficientes en entornos discretos y conocidos.
-#### Monte Carlo Methods:
-- **Descripción**: Los métodos de Monte Carlo se basan en simular muchos episodios completos y promediar los resultados para estimar los valores de estado o de acción. Pueden ser utilizados en entornos donde no se conoce el modelo y es necesario aprender a partir de la experiencia directa.
-- **Aplicabilidad**: Como el entorno es episódico, los métodos de Monte Carlo pueden ser efectivos para evaluar y mejorar políticas basándose en el retorno observado en episodios completos.
-- **Ventajas**: No requieren un modelo del entorno y son efectivos en entornos episódicos.
-#### Dyna-Q:
-- **Descripción**: Dyna-Q combina aspectos de Q-Learning con la planificación. Se construye un modelo del entorno basado en la experiencia y se utiliza para simular y actualizar la tabla Q adicionalmente a la experiencia directa.
-- **Aplicabilidad**: En un entorno determinista y discreto, Dyna-Q puede aprovechar tanto la experiencia real como las simulaciones del modelo aprendido para acelerar el proceso de aprendizaje.
-- **Ventajas**: Combina aprendizaje directo y simulaciones para mejorar la eficiencia de la convergencia.
+**Política de Acción:** Los agentes utilizan una política epsilon-greedy basada en su percepción local para seleccionar acciones.
 
-Para un entorno con las características descritas, **Q-Learning** y **SARSA** son probablemente los algoritmos más recomendados debido a su capacidad para manejar entornos discretos, determinísticos y totalmente observables. **Dynamic Programming** es también una opción sólida si el modelo del entorno es conocido. Si estás trabajando con simulaciones o si el entorno es sencillo, los **métodos de Monte Carlo** pueden ser útiles. **Dyna-Q** es ideal si buscas una combinación de aprendizaje basado en experiencia directa y simulaciones.
-### Implementar Q-Learning en un Juego de Ping Pong
+3. Aprendizaje Descentralizado e Independiente: A traves del algoritmo Q-Learning Independiente, cada agente mantiene su propia tabla Q y actualiza sus valores basándose en sus experiencias individuales.
 
-![](files/assets/Algoritmo.png)
+**Recompensas Locales:**
+- Positivas cuando el agente devuelve la pelota exitosamente.
+- Negativas cuando falla al devolver la pelota.
+- Objetivo Compartido: Mantener la pelota en juego el mayor tiempo posible, lo que incentiva la cooperación emergente.
 
-#### Paso 1: Definir el Entorno y los Estados
-Primero, necesitamos definir el entorno en el que el agente (nuestro jugador) operará. En Q-Learning, el entorno se representa en términos de **estados**. Un estado es una representación del entorno en un momento dado. En el juego de ping pong, un estado podría estar compuesto por:
+4. Interacciones entre Agentes
+- Coordinación Indirecta: Los agentes influyen en el comportamiento del otro a través del entorno (la pelota).
+- Comunicación Limitada (Opcional): Se puede permitir una comunicación mínima para mejorar la coordinación sin centralizar el control.
 
-- Caso 1 (Por defecto)
-   1. La posición vertical/horizontal de la pala del jugador.
-   1. La posición vertical y horizontal de la pelota.
-- Caso 2
-   1. La posición vertical/horizontal de la pala del jugador.
-   1. La posición vertical de la pelota.
-   1. La dirección del movimiento de la pelota (arriba o abajo).
-#### Paso 2: Definir las Acciones
-Las **acciones** son los movimientos que el agente puede realizar en cada estado. En este caso, las acciones disponibles para el agente podrían ser:
-- Caso 1 (Por defecto)
-   1. Mover la pala hacia arriba / derecha.
-   1. Mover la pala hacia abajo / izquierda.
-- Caso 2
-   1. Mover la pala hacia arriba / derecha.
-   1. Mover la pala hacia abajo / izquierda.
-   1. Mantener la pala en la misma posición.
+5. Autoorganización y Comportamiento Emergente
+- Adaptación Mutua: Los agentes ajustan sus políticas basándose en las acciones observadas del otro agente.
+- Desarrollo de Estrategias: A través del aprendizaje, pueden surgir estrategias como posicionamiento óptimo o roles complementarios.
 
-#### Paso 3: Inicializar la Tabla Q
-La tabla Q es una estructura que almacena los valores Q para cada par estado-acción. Estos valores representan la "calidad" de tomar una acción en un estado particular en términos de la recompensa esperada a largo plazo.
+### Pasos Detallados de Implementación
 
-**Tabla Q**: Inicializa la tabla Q con valores pequeños (por ejemplo, todos ceros). La tabla Q tendrá filas para cada estado posible y columnas para cada acción posible.
-#### Paso 4: Definir la Función de Recompensa
-La **función de recompensa** es lo que el agente intenta maximizar. El objetivo del agente es maximizar la suma de estas recompensas a lo largo del juego. Necesitamos definir las recompensas para diferentes resultados.
+**Paso 1:** Configuración del Entorno: Corresponde al espacio de Estados Locales, para cada agente incluye:
+- Posición de la paleta (y_agente).
+- Posición y velocidad de la pelota relativa al agente (delta_x_pelota, delta_y_pelota, v_x_pelota, v_y_pelota).
 
-**Recompensas**:
-1. Si el jugador devuelve la pelota con éxito (la pelota rebota en la pala), se le otorga una recompensa positiva (por ejemplo, +10 puntos).
-1. Si el jugador falla y la pelota pasa de largo, se le otorga una recompensa negativa (por ejemplo, -10 puntos).
-1. En caso que no ocurra ninguna de las situaciones previas se otorga 0 puntos.
-#### Paso 5: Implementar el Algoritmo Q-Learning
-Ahora, implementamos el núcleo del algoritmo Q-Learning.
-**Algoritmo Q-Learning**:
-1. **Exploración vs. Explotación**: Define un parámetro ε (epsilon) para decidir si el agente explora acciones nuevas o explota la mejor acción conocida hasta el momento. Con probabilidad ε, el agente elegirá una acción al azar (exploración); de lo contrario, elegirá la acción con el mayor valor Q en ese estado (explotación).
-1. **Actualización de la Tabla Q**: Después de que el agente tome una acción y observe la recompensa y el nuevo estado resultante, actualizamos la tabla Q usando la fórmula:
+> Nota: Para reducir la complejidad se puede aplicar la discretización que consiste en convertir valores continuos en categorías discretas
+
+**Paso 2:** Definición de las Acciones y Políticas
+* Acciones:
+    - Arriba, Abajo, Quieto.
+    - Política Epsilon-Greedy:
+* Con probabilidad epsilon, el agente explora seleccionando una acción aleatoria.
+* Con probabilidad 1 - epsilon, explota seleccionando la acción con el mayor valor Q.
+
+**Paso 3:** Estructura de Recompensas Locales, pero tambien se podria agregar opcionalmente, una pequeña penalización por cada movimiento para incentivar la eficiencia.
+- +1 por devolver la pelota exitosamente.
+- -1 por fallar al devolver la pelota.
+
+**Paso 4:** Algoritmo de Q-Learning Descentralizado, para cada agente y en cada paso de tiempo:
+
+1. Observación del Estado Local s.
+2. Selección de Acción a: Usando la política epsilon-greedy.
+3. Ejecución de la Acción a: Actualizar la posición de la paleta según la acción.
+4. Actualización del Entorno: El entorno actualiza la posición y velocidad de la pelota.
+5. Recepción de Recompensa r: Basada en el resultado de la acción (éxito o fallo al devolver la pelota).
+6. Observación del Nuevo Estado s'.
+7. Actualización de la Tabla Q:
 
    ![](files/assets/Qlearning.png)
 
@@ -153,13 +169,22 @@ Ahora, implementamos el núcleo del algoritmo Q-Learning.
    1. γ es el factor de descuento, que determina la importancia de las recompensas futuras.
    1. ![](Aspose.Words.4016bc56-786a-4dd4-8df8-0de9cfbe8fd3.004.png)es el valor Q máximo para el siguiente estado s′ y todas las acciones posibles a′.
 
-#### Paso 6: Entrenamiento y Evaluación
-Finalmente, entrenamos al agente durante varios episodios y evaluamos su rendimiento.
+**Paso 5:** Emergencia de la Coordinación
+* Influencia Mutua a través del Entorno:
+    - Las acciones de un agente afectan indirectamente las experiencias del otro.
+* Aprendizaje Adaptativo:
+    - Los agentes aprenden a predecir el comportamiento de la pelota y del otro agente, ajustando sus acciones en consecuencia.
+* Comportamientos Emergentes:
+    - Sin programación explícita, pueden surgir patrones de juego cooperativo.
 
-6. **Entrenamiento**: Repite el proceso de Q-Learning durante muchos episodios (partidas del juego). A medida que el agente experimenta más, la tabla Q se ajusta para reflejar las mejores acciones a tomar en diferentes situaciones.
-6. **Evaluación**: Después del entrenamiento, evalúa el agente usando la política aprendida (es decir, seleccionando siempre la acción con el mayor valor Q). Mide su rendimiento para ver si está jugando de manera óptima, maximizando el puntaje y minimizando las pérdidas de vidas.
-
-Q-Learning es un proceso iterativo donde el agente mejora su política de acción con el tiempo mediante la actualización continua de la tabla Q. En el juego de ping pong, el agente aprenderá a mover la pala de manera efectiva para maximizar su puntaje y minimizar la pérdida de vidas, mejorando su rendimiento en cada episodio de juego. **En resumen,** el ping pong es un excelente ejemplo para entender cómo funciona el aprendizaje por refuerzo. Al descomponer el juego en sus componentes básicos, podemos apreciar cómo los agentes aprenden a tomar decisiones óptimas a través de la interacción con su entorno y la obtención de recompensas.
+**Paso 6:** Evaluación y Mejora
+* Métricas de Rendimiento:
+    - Tiempo promedio que la pelota permanece en juego.
+* Frecuencia de devoluciones exitosas.
+    - Ajuste de Parámetros:
+    - Ajustar \alpha, \gamma y epsilon para mejorar la convergencia y el rendimiento.
+* Introducción de Variabilidad:
+    - Modificar condiciones del juego para fomentar la adaptabilidad (por ejemplo, cambiar la velocidad de la pelota).
 
 ## Herramientas utiles
 - Convertir WORD a Markdown Online [Aspose](https://products.aspose.app/words/conversion/word-to-md)
