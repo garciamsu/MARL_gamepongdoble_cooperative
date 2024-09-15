@@ -5,14 +5,14 @@ class Game:
     def __init__(self):
         # Configuración de la ventana del juego
         self.window = turtle.Screen()
-        self.window.title("Pong Cooperativo")
-        self.window.bgcolor("lightblue")
+        self.window.title("Pong Game Cooperativo")
+        self.window.bgcolor("lightgreen")
         self.window.setup(width=800, height=600)
         self.window.tracer(0)
 
         # Crear instancias de las clases anidadas
-        self.paddle_a = self.Paddle(350, 50)
-        self.paddle_b = self.Paddle(350, -50)
+        self.paddle_a = self.Paddle(350, 50, "blue")
+        self.paddle_b = self.Paddle(350, -50, "red")
         self.ball = self.Ball()
         self.scoreboard = self.Scoreboard()
 
@@ -27,10 +27,10 @@ class Game:
         self.run_game()
 
     class Paddle(turtle.Turtle):
-        def __init__(self, x, y):
+        def __init__(self, x, y, color):
             super().__init__()
             self.shape("square")
-            self.color("darkblue")
+            self.color(color)
             self.shapesize(stretch_wid=6, stretch_len=1)
             self.penup()
             self.goto(x, y)
@@ -49,7 +49,7 @@ class Game:
         def __init__(self):
             super().__init__()
             self.shape("circle")
-            self.color("red")
+            self.color("white")
             self.penup()
             self.goto(0, 0)
             self.dx = random.choice([-0.2, -0.15])
@@ -59,32 +59,17 @@ class Game:
             self.setx(self.xcor() + self.dx)
             self.sety(self.ycor() + self.dy)
 
-            # Rebote en los bordes superiores e inferiores
-            if self.ycor() > 290:
-                self.sety(290)
-                self.dy *= -1
-
-            if self.ycor() < -290:
-                self.sety(-290)
-                self.dy *= -1
-
-            # Si la pelota sale por el lado derecho
-            if self.xcor() > 390:
-                return "missed"
-
-            # Si la pelota sale por el lado izquierdo, reiniciamos
-            if self.xcor() < -390:
-                self.goto(0, 0)
-                self.dx = random.choice([-0.2, -0.15])
-                self.dy = random.choice([-0.2, 0.2])
-
             return "continue"
+
+        def bounce_y(self):
+            self.dy *= -1
+            # Variar velocidad tras cada rebote
+            #self.dy += random.choice([0.01, -0.01])
 
         def bounce_x(self):
             self.dx *= -1
             # Variar velocidad tras cada rebote
-            self.dx += random.choice([0.01, -0.01])
-            self.dy += random.choice([0.01, -0.01])
+            #self.dx += random.choice([0.01, -0.01])
 
     class Scoreboard(turtle.Turtle):
         def __init__(self):
@@ -104,6 +89,34 @@ class Game:
             self.score += 1
             self.update_score()
 
+    def check_collisions(self):
+
+        # Rebote en el borde superior
+        if self.ball.ycor() >= 280:
+            self.ball.sety(280)
+            self.ball.bounce_y()
+
+        # Rebote en los bordes laterales
+        if self.ball.xcor() >= 380 or self.ball.xcor() <= -380:
+            self.ball.bounce_x()
+
+        # Rebote en la paleta
+        if (-260 <= self.ball.ycor() <= -230) and \
+           (self.agent.paddle.xcor() - 50 <= self.ball.xcor() <= self.agent.paddle.xcor() + 50):
+            self.ball.sety(-230)
+            self.ball.bounce_y()
+            self.score += 10
+            self.plays += 1
+            self.show_score()
+
+        # Revisar si la pelota toca el borde inferior
+        if self.ball.ycor() <= -280:
+            self.ball.reset_position()
+            self.score -= 10
+            self.plays += 1
+            self.agent.lives -= 1
+            #self.show_score()
+
     def run_game(self):
         while True:
             self.window.update()
@@ -111,20 +124,12 @@ class Game:
             # Mover la pelota
             status = self.ball.move()
 
+            # Chequea las colisiones
+            self.check_collisions()
+
             # Revisar si la pelota fue fallada
             if status == "missed":
                 break  # El juego termina si la pelota es fallada
-
-            # Rebote con las paletas
-            if (340 < self.ball.xcor() < 350) and (self.paddle_a.ycor() - 50 < self.ball.ycor() < self.paddle_a.ycor() + 50):
-                self.ball.setx(340)
-                self.ball.bounce_x()
-                self.scoreboard.increase_score()
-
-            if (340 < self.ball.xcor() < 350) and (self.paddle_b.ycor() - 50 < self.ball.ycor() < self.paddle_b.ycor() + 50):
-                self.ball.setx(340)
-                self.ball.bounce_x()
-                self.scoreboard.increase_score()
 
         # Finaliza el juego
         self.window.bye()
