@@ -90,31 +90,32 @@ class Game:
             self.update_score()
 
     def check_collisions(self):
-
-        # Rebote en el borde superior
-        if self.ball.ycor() >= 280:
-            self.ball.sety(280)
-            self.ball.bounce_y()
-
-        # Rebote en los bordes laterales
-        if self.ball.xcor() >= 380 or self.ball.xcor() <= -380:
+        
+        print(self.ball.ycor())
+        # Rebote en el borde lateral izquierdo
+        if self.ball.xcor() <= -280:
+            self.ball.setx(280)
             self.ball.bounce_x()
 
-        # Rebote en la paleta
-        if (-260 <= self.ball.ycor() <= -230) and \
-           (self.agent.paddle.xcor() - 50 <= self.ball.xcor() <= self.agent.paddle.xcor() + 50):
-            self.ball.sety(-230)
+        # Rebote en los bordes inferior o superior
+        if self.ball.ycor() >= 280 or self.ball.ycor() <= -280:
             self.ball.bounce_y()
-            self.score += 10
-            self.plays += 1
-            self.show_score()
+           
+        # Rebote en la paleta
+        #if (-260 <= self.ball.ycor() <= -230) and \
+        #   (self.agent.paddle.xcor() - 50 <= self.ball.xcor() <= self.agent.paddle.xcor() + 50):
+        #    self.ball.sety(-230)
+        #    self.ball.bounce_y()
+        #    self.score += 10
+        #    self.plays += 1
+        #    self.show_score()
 
         # Revisar si la pelota toca el borde inferior
-        if self.ball.ycor() <= -280:
-            self.ball.reset_position()
-            self.score -= 10
-            self.plays += 1
-            self.agent.lives -= 1
+        #if self.ball.ycor() <= -280:
+            #self.ball.reset_position()
+            #self.score -= 10
+            #self.plays += 1
+            #self.agent.lives -= 1
             #self.show_score()
 
     def run_game(self):
